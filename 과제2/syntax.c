@@ -58,7 +58,7 @@ A_NODE* makeNode(NODE_NAME n, A_NODE* a, A_NODE* b, A_NODE* c) {
 	return (m);
 }
 A_NODE* makeNodeList(NODE_NAME n, A_NODE* a, A_NODE* b) {
-	// ¸®½ºÆ® ÇüÅÂÀÇ ½ÅÅÃ½º Æ®¸® ¸¶Áö¸·¿¡ ½ÅÅÃ½º Æ®¸® b¸¦ Ãß°¡ ¿¬°á
+	// ë¦¬ìŠ¤íŠ¸ í˜•íƒœì˜ ì‹ íƒìŠ¤ íŠ¸ë¦¬ ë§ˆì§€ë§‰ì— ì‹ íƒìŠ¤ íŠ¸ë¦¬ bë¥¼ ì¶”ê°€ ì—°ê²°
 	A_NODE* m, * k;
 	k = a;
 	while (k->rlink)
@@ -157,9 +157,9 @@ void checkForwardReference() {
 	while (id->level >= current_level) {
 		t = id->type;
 		if (id->kind == ID_NULL) syntax_error(31, id->name);
-		// ÇöÀçÀÇ level¿¡¼­ ÀÌ¸§ÀÇ Á¾·ù°¡ Á¤ÇØÁöÁö ¾Ê¾Ò°Å³ª
+		// í˜„ì¬ì˜ levelì—ì„œ ì´ë¦„ì˜ ì¢…ë¥˜ê°€ ì •í•´ì§€ì§€ ì•Šì•˜ê±°ë‚˜
 		else if ((id->kind == ID_STRUCT || id->kind == ID_ENUM) && t->field == NULL) syntax_error(32, id->name);
-		// ¹Ì¿Ï¼º ±¸Á¶Ã¼ ¼±¾ğÀÌ ÀÖ´ÂÁö °Ë»ç
+		// ë¯¸ì™„ì„± êµ¬ì¡°ì²´ ì„ ì–¸ì´ ìˆëŠ”ì§€ ê²€ì‚¬
 		id = id->prev;
 	}
 }
@@ -266,25 +266,25 @@ A_ID* setFunctionDeclaratorSpecifier(A_ID* id, A_SPECIFIER* p) {
 	setDefaultSpecifier(p);
 	if (id->type->kind != T_FUNC) {
 		syntax_error(25, "error");
-		return(id); //ÇÔ¼ö°¡ ¾Æ´Ñ °æ¿ì ¹èÁ¦
+		return(id); //í•¨ìˆ˜ê°€ ì•„ë‹Œ ê²½ìš° ë°°ì œ
 	}
 	else {
 		id = setDeclaratorElementType(id, p->type);
 		id->kind = ID_FUNC;
 	}
-	a = searchIdentifierAtCurrentLevel(id->name, id->prev);	//¼±¾ğµÇ¾îÀÖ¾ú´ÂÁö °Ë»ç
+	a = searchIdentifierAtCurrentLevel(id->name, id->prev);	//ì„ ì–¸ë˜ì–´ìˆì—ˆëŠ”ì§€ ê²€ì‚¬
 	if (a) {
-		if (a->kind != ID_FUNC || a->type->expr) syntax_error(12, id->name); //ÇÔ¼ö¼±¾ğÀÌ ¾Æ´Ï¾úÀ» °æ¿ì ¿¡·¯
+		if (a->kind != ID_FUNC || a->type->expr) syntax_error(12, id->name); //í•¨ìˆ˜ì„ ì–¸ì´ ì•„ë‹ˆì—ˆì„ ê²½ìš° ì—ëŸ¬
 		else {
 			if (isNotSameFormalParameters(a->type->field, id->type->field)) syntax_error(22, id->name);
-			// ¼±¾ğºÎ ÆÄ¶ó¹ÌÅÍ¿Í Á¤ÀÇºÎ ÆÄ¶ó¹ÌÅÍ°¡ ´Ù¸¦ °æ¿ì ¿¡·¯
+			// ì„ ì–¸ë¶€ íŒŒë¼ë¯¸í„°ì™€ ì •ì˜ë¶€ íŒŒë¼ë¯¸í„°ê°€ ë‹¤ë¥¼ ê²½ìš° ì—ëŸ¬
 			else if (isNotSameType(a->type->element_type, id->type->element_type)) syntax_error(26, a->name);
-			// ¼±¾ğºÎ ¸®ÅÏÅ¸ÀÔ°ú Á¤ÀÇºÎ ¸®ÅÏÅ¸ÀÔÀÌ ´Ù¸¦ °æ¿ì ¿¡·¯
+			// ì„ ì–¸ë¶€ ë¦¬í„´íƒ€ì…ê³¼ ì •ì˜ë¶€ ë¦¬í„´íƒ€ì…ì´ ë‹¤ë¥¼ ê²½ìš° ì—ëŸ¬
 		}
 	}
 	a = id->type->field;
 	while (a) {
-		if (strlen(a->name)!=0) current_id = a; // ÇöÀç id¸¦ ÆÄ¶ó¹ÌÅÍ ½Éº¼Å×ÀÌºí·Î ÀÌµ¿½ÃÅ²´Ù.
+		if (strlen(a->name)!=0) current_id = a; // í˜„ì¬ idë¥¼ íŒŒë¼ë¯¸í„° ì‹¬ë³¼í…Œì´ë¸”ë¡œ ì´ë™ì‹œí‚¨ë‹¤.
 		else if (a->type) syntax_error(23, "error");
 		a = a->link;
 	}
@@ -303,12 +303,12 @@ A_ID* setDeclaratorListSpecifier(A_ID* id, A_SPECIFIER* p) {
 	while (a) {
 		if (strlen(a->name)!=0 &&
 			searchIdentifierAtCurrentLevel(id->name, id->prev)) syntax_error(12,a->name);
-		//Áßº¹¼±¾ğ °Ë»ç
+		//ì¤‘ë³µì„ ì–¸ ê²€ì‚¬
 		a = setDeclaratorElementType(a, p->type);
 		if (p->stor == S_TYPEDEF) a->kind = ID_TYPE;
 		else if (a->type->kind == T_FUNC) a->kind = ID_FUNC;
 		else a->kind = ID_VAR;
-		//°¢ Å¸ÀÔ¿¡ ¸Â°Ô ¸íÄª Å¸ÀÔ ÁöÁ¤
+		//ê° íƒ€ì…ì— ë§ê²Œ ëª…ì¹­ íƒ€ì… ì§€ì •
 		a->specifier = p->stor;
 		if (a->specifier == S_NULL)
 			a->specifier = S_AUTO;
@@ -319,9 +319,9 @@ A_ID* setDeclaratorListSpecifier(A_ID* id, A_SPECIFIER* p) {
 // set declarator_list type and kind
 A_ID* setParameterDeclaratorSpecifier(A_ID* id, A_SPECIFIER* p) {
 	if (searchIdentifierAtCurrentLevel(id->name, id->prev)) syntax_error(12, id->name);
-	//Áßº¹Ã¼Å©
+	//ì¤‘ë³µì²´í¬
 	if (p->stor || p->type == void_type) syntax_error(14, "ERROR");
-	// ÆÄ¶ó¹ÌÅÍ´Â º¸ÀÌµå¿©¼­µµ ¾È µÇ°í ÀúÀåÀå¼Ò ÁöÁ¤ÀÚ°¡ µîÀåÇØ¼­µµ ¾È µÈ´Ù.
+	// íŒŒë¼ë¯¸í„°ëŠ” ë³´ì´ë“œì—¬ì„œë„ ì•ˆ ë˜ê³  ì €ì¥ì¥ì†Œ ì§€ì •ìê°€ ë“±ì¥í•´ì„œë„ ì•ˆ ëœë‹¤.
 	setDefaultSpecifier(p);
 	id = setDeclaratorElementType(id, p->type);
 	id->kind = ID_PARM;
@@ -332,11 +332,11 @@ A_ID* setStructDeclaratorListSpecifier(A_ID* id, A_TYPE* t) {
 	a = id;
 	while (a) {
 		if (searchIdentifierAtCurrentLevel(a->name, a->prev)) syntax_error(12, a->name);
-		//Áßº¹¼±¾ğµÇ¾î ÀÖ¾úÀ» °æ¿ì ¿¡·¯
+		//ì¤‘ë³µì„ ì–¸ë˜ì–´ ìˆì—ˆì„ ê²½ìš° ì—ëŸ¬
 		a = setDeclaratorElementType(a, t);
 		a->kind = ID_FIELD;
 		a = a->link;
-		// ±¸Á¶Ã¼ ¸â¹ö´Â ÇÏ³ªÀÇ declaratorSpecifier·Î Å¸ÀÔ¼±¾ğµÉ ¼ö ÀÖÀ¸¹Ç·Î ¹İº¹ÇÑ´Ù.
+		// êµ¬ì¡°ì²´ ë©¤ë²„ëŠ” í•˜ë‚˜ì˜ declaratorSpecifierë¡œ íƒ€ì…ì„ ì–¸ë  ìˆ˜ ìˆìœ¼ë¯€ë¡œ ë°˜ë³µí•œë‹¤.
 	}
 	return(id);
 }
@@ -420,7 +420,7 @@ BOOLEAN isNotSameType(A_TYPE* t1, A_TYPE* t2) {
 		return (t1 != t2);
 }
 void initialize() {
-	// primitive data types ¼³Á¤
+	// primitive data types ì„¤ì •
 	int_type = setTypeAndKindOfDeclarator(
 		makeType(T_ENUM), ID_TYPE, makeIdentifier("int"));
 	float_type = setTypeAndKindOfDeclarator(
